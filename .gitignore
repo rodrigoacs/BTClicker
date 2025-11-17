@@ -1,0 +1,60 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Output
+dist/
+build/
+out/
+.vite/
+
+# Vue / Nuxt / static site
+.nuxt/
+.storybook/
+storybook-static/
+
+# Logs and reports
+logs/
+*.log
+coverage/
+.nyc_output/
+
+# Lockfiles (do NOT ignore lockfiles if you want reproducible installs)
+# package-lock.json
+# yarn.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.pid
+*.seed
+
+# TypeScript
+*.tsbuildinfo
+
+# Caches
+.cache/
+.parcel-cache/
+
+# Misc
+coverage/
