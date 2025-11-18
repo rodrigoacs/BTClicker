@@ -63,7 +63,7 @@ function handleClick(event) {
 
     setTimeout(() => {
       popups.value = popups.value.filter(p => p.id !== newPopup.id)
-    }, 1000)
+    }, 10000)
 
     batchTimer = null
     batchAmount = 0
