@@ -42,7 +42,26 @@ Para executar este projeto localmente, siga os passos abaixo:
     ```
 
 4.  **Acesse o jogo** no seu navegador, geralmente em `http://localhost:5173`.
+## Compilação para Android
 
+1. Gere os arquivos web (build do Vite)
+```bash
+npm run build
+```
+
+2. Adicione o Android (apenas na primeira vez) e sincronize os ativos:
+```bash
+# adicionar plataforma (somente se ainda não existir)
+npx cap add android
+
+# sincronizar web build com o projeto nativo
+npx cap sync android
+```
+
+3. Abra o projeto Android no Android Studio:
+```bash
+npx cap open android
+```
 ## Estrutura do Projeto
 
 Aqui está uma visão geral dos arquivos e diretórios mais importantes:
