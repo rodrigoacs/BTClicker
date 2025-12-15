@@ -2,8 +2,19 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useGameStore = defineStore('game', () => {
+  // ----------------
+  // 1. NOVAS CONFIGURAÇÕES (O erro acontece porque isso falta)
+  // ----------------
+  const autoSaveEnabled = ref(true)
+  const autoSaveInterval = ref(30000) // 30 segundos
+  const volume = ref(50)
+
+  // ----------------
+  // 2. ESTADOS DO JOGO
+  // ----------------
   const lastTickTime = ref(Date.now())
   const totalBitcoins = ref(0)
+
   const upgrades = ref([
     {
       id: 1,
@@ -98,6 +109,9 @@ export const useGameStore = defineStore('game', () => {
     }
   ])
 
+  // ----------------
+  // 3. GETTERS
+  // ----------------
   const clickPower = computed(() => {
     let power = 1
     const clickUpgrades = upgrades.value.filter(up => up.type === 'click')
@@ -123,24 +137,9 @@ export const useGameStore = defineStore('game', () => {
     return rawPower * totalMultiplier
   })
 
-  function resetLastTick() {
-    lastTickTime.value = Date.now()
-  }
-
-  function gameTick() {
-    const currentTime = Date.now()
-    const deltaTime = currentTime - lastTickTime.value
-
-    if (deltaTime > 0) {
-      const btcPerMillisecond = btcPerSecond.value / 1000
-      const bitcoinsToAdd = btcPerMillisecond * deltaTime
-
-      totalBitcoins.value += bitcoinsToAdd
-    }
-
-    lastTickTime.value = currentTime
-  }
-
+  // ----------------
+  // 4. ACTIONS
+  // ----------------
   function clickBitcoin() {
     totalBitcoins.value += clickPower.value
   }
@@ -168,20 +167,107 @@ export const useGameStore = defineStore('game', () => {
       item.owned++
       item.cost = Math.ceil(item.baseCost * Math.pow(1.15, item.owned))
     } else {
-      console.log("Bitcoins insuficientes para comprar:", item.name)
+      console.log("Bitcoins insuficientes")
     }
   }
 
+  function resetLastTick() {
+    lastTickTime.value = Date.now()
+  }
 
+  function gameTick() {
+    const currentTime = Date.now()
+    const deltaTime = currentTime - lastTickTime.value
+    if (deltaTime > 0) {
+      const btcPerMillisecond = btcPerSecond.value / 1000
+      totalBitcoins.value += btcPerMillisecond * deltaTime
+    }
+    lastTickTime.value = currentTime
+  }
+
+  // ----------------
+  // 5. SALVAR E CARREGAR (Atualizado)
+  // ----------------
+  function saveGame() {
+    const gameState = {
+      totalBitcoins: totalBitcoins.value,
+      lastTickTime: lastTickTime.value,
+      upgrades: upgrades.value.map(u => ({ id: u.id, owned: u.owned, cost: u.cost })),
+      generators: generators.value.map(g => ({ id: g.id, owned: g.owned, cost: g.cost })),
+      // Salvando as novas configs
+      settings: {
+        autoSaveEnabled: autoSaveEnabled.value,
+        autoSaveInterval: autoSaveInterval.value,
+        volume: volume.value
+      }
+    }
+    localStorage.setItem('bitcoin-clicker-save', JSON.stringify(gameState))
+    console.log('Jogo salvo!')
+  }
+
+  function loadGame() {
+    const savedString = localStorage.getItem('bitcoin-clicker-save')
+    if (!savedString) return
+
+    const savedState = JSON.parse(savedString)
+
+    totalBitcoins.value = savedState.totalBitcoins || 0
+    lastTickTime.value = savedState.lastTickTime || Date.now()
+
+    savedState.upgrades.forEach(savedUpgrade => {
+      const upgradeInStore = upgrades.value.find(u => u.id === savedUpgrade.id)
+      if (upgradeInStore) {
+        upgradeInStore.owned = savedUpgrade.owned
+        upgradeInStore.cost = savedUpgrade.cost
+      }
+    })
+
+    savedState.generators.forEach(savedGenerator => {
+      const generatorInStore = generators.value.find(g => g.id === savedGenerator.id)
+      if (generatorInStore) {
+        generatorInStore.owned = savedGenerator.owned
+        generatorInStore.cost = savedGenerator.cost
+      }
+    })
+
+    // Carregando as configs
+    if (savedState.settings) {
+      autoSaveEnabled.value = savedState.settings.autoSaveEnabled ?? true
+      autoSaveInterval.value = savedState.settings.autoSaveInterval || 30000
+      volume.value = savedState.settings.volume || 50
+    }
+  }
+
+  function resetGame() {
+    localStorage.removeItem('bitcoin-clicker-save')
+    location.reload()
+  }
+
+  // ----------------
+  // 6. RETORNO (EXPORTAÇÃO) - Onde o erro acontecia
+  // ----------------
   return {
+    // Variáveis
     totalBitcoins,
     upgrades,
     generators,
+    lastTickTime,
+    // NOVAS VARIÁVEIS EXPORTADAS
+    autoSaveEnabled,
+    autoSaveInterval,
+    volume,
+
+    // Getters
     clickPower,
     btcPerSecond,
+
+    // Actions
     clickBitcoin,
     buyItem,
     gameTick,
-    resetLastTick
+    resetLastTick,
+    saveGame,
+    loadGame,
+    resetGame
   }
 })

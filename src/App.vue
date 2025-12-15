@@ -40,22 +40,49 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { RouterView, RouterLink } from 'vue-router'
 import { useGameStore } from './stores/gameStore'
 import { storeToRefs } from 'pinia'
 
 const gameStore = useGameStore()
-const { totalBitcoins } = storeToRefs(gameStore)
+const { totalBitcoins, autoSaveEnabled, autoSaveInterval } = storeToRefs(gameStore)
+
 let gameLoop = null
+let autoSaveLoop = null
+
+function startAutoSave() {
+  if (autoSaveLoop) clearInterval(autoSaveLoop)
+
+  if (!autoSaveEnabled.value) {
+    console.log("Auto Save desativado.")
+    return
+  }
+
+  console.log(`Auto Save iniciado: a cada ${autoSaveInterval.value / 1000}s`)
+
+  autoSaveLoop = setInterval(() => {
+    gameStore.saveGame()
+  }, autoSaveInterval.value)
+}
 
 onMounted(() => {
-  gameStore.resetLastTick()
+  gameStore.loadGame()
+
+  // gameStore.resetLastTick()
   gameLoop = setInterval(gameStore.gameTick, 100)
+
+  startAutoSave()
+})
+
+watch([autoSaveEnabled, autoSaveInterval], () => {
+  startAutoSave()
 })
 
 onUnmounted(() => {
   clearInterval(gameLoop)
+  clearInterval(autoSaveLoop)
+  gameStore.saveGame()
 })
 
 function formatNumber(num) {
@@ -71,6 +98,7 @@ function formatNumber(num) {
 <style>
 * {
   user-select: none;
+  box-sizing: border-box; /* Importante para o padding não estourar a largura */
 }
 
 body {
@@ -79,35 +107,48 @@ body {
   padding: 0;
   background-color: #f0f0f0;
   color: #333;
-  overflow: hidden;
+  /* Removemos o overflow hidden do body para garantir que o #app controle tudo */
 }
 
 #app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  
+  /* --- A CORREÇÃO ESTÁ AQUI --- */
+  height: 100vh; /* Fixa a altura na altura da tela (Viewport Height) */
+  overflow: hidden; /* Impede que a tela inteira role */
+  /* ---------------------------- */
 }
 
 .app-header {
+  /* Flex-shrink 0 impede que o header seja esmagado se faltar espaço */
+  flex-shrink: 0; 
   text-align: center;
   padding: 15px;
   background-color: #ff9900;
   color: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 10; /* Garante que a sombra fique sobre o conteúdo */
 }
 
 .content-area {
   flex-grow: 1;
   padding: 10px;
-  overflow-y: auto;
+  
+  /* --- AQUI É ONDE O SCROLL ACONTECE --- */
+  overflow-y: auto; 
+  /* Suaviza a rolagem no iOS */
+  -webkit-overflow-scrolling: touch; 
 }
 
 .tab-navigation {
+  flex-shrink: 0; /* Impede que o rodapé seja esmagado ou suma */
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
   background-color: #333;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
 
 .tab-button {
