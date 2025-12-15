@@ -1,0 +1,112 @@
+[
+  {
+    "id": 101,
+    "name": "Estudante de TI",
+    "description": "Gera 1 Bitcoin por segundo.",
+    "cost": 100,
+    "baseCost": 100,
+    "value": 1,
+    "owned": 0,
+    "type": "auto",
+    "category": "generator"
+  },
+  {
+    "id": 102,
+    "name": "Placa de Vídeo Antiga",
+    "description": "Gera 5 Bitcoins por segundo.",
+    "cost": 500,
+    "baseCost": 500,
+    "value": 5,
+    "owned": 0,
+    "type": "auto",
+    "category": "generator"
+  },
+  {
+    "id": 103,
+    "name": "Fazenda de Mineração Pequena",
+    "description": "Uma garagem cheia de PCs. +50 BTC/s.",
+    "cost": 5000,
+    "baseCost": 5000,
+    "value": 50,
+    "owned": 0,
+    "type": "auto",
+    "category": "generator"
+  },
+  {
+    "id": 104,
+    "name": "ASIC Miner",
+    "description": "Hardware especializado. +100 BTC/s.",
+    "cost": 10000,
+    "baseCost": 10000,
+    "value": 100,
+    "owned": 0,
+    "type": "auto",
+    "category": "generator"
+  },
+  {
+    "id": 105,
+    "name": "Cluster de Servidores",
+    "description": "Vários racks trabalhando juntos. +600 BTC/s.",
+    "cost": 50000,
+    "baseCost": 50000,
+    "value": 600,
+    "owned": 0,
+    "type": "auto",
+    "category": "generator"
+  },
+  {
+    "id": 106,
+    "name": "Data Center Subterrâneo",
+    "description": "Refrigeração natural e segurança máxima. +3.500 BTC/s.",
+    "cost": 250000,
+    "baseCost": 250000,
+    "value": 3500,
+    "owned": 0,
+    "type": "auto",
+    "category": "generator"
+  },
+  {
+    "id": 107,
+    "name": "Botnet Global",
+    "description": "Usa geladeiras inteligentes de outras pessoas. +20.000 BTC/s.",
+    "cost": 1500000,
+    "baseCost": 1500000,
+    "value": 20000,
+    "owned": 0,
+    "type": "auto",
+    "category": "generator"
+  },
+  {
+    "id": 108,
+    "name": "Usina Geotérmica Dedicada",
+    "description": "Energia infinita para minerar sem parar. +150.000 BTC/s.",
+    "cost": 20000000,
+    "baseCost": 20000000,
+    "value": 150000,
+    "owned": 0,
+    "type": "auto",
+    "category": "generator"
+  },
+  {
+    "id": 109,
+    "name": "Satélite de Mineração",
+    "description": "Minera no vácuo do espaço (sem aquecer). +1.000.000 BTC/s.",
+    "cost": 500000000,
+    "baseCost": 500000000,
+    "value": 1000000,
+    "owned": 0,
+    "type": "auto",
+    "category": "generator"
+  },
+  {
+    "id": 110,
+    "name": "Matriz de Realidade Virtual",
+    "description": "Transforma a realidade em Hashrates. +50.000.000 BTC/s.",
+    "cost": 15000000000,
+    "baseCost": 15000000000,
+    "value": 50000000,
+    "owned": 0,
+    "type": "auto",
+    "category": "generator"
+  }
+]
