@@ -116,6 +116,30 @@
       </button>
     </div>
 
+    <!-- <div class="settings-card about-card">
+      <div class="app-info">
+        <span class="app-icon">₿</span>
+        <div>
+          <h4 class="app-name">Bitcoin Clicker</h4>
+          <span class="app-version">Versão 1.0.0</span>
+        </div>
+      </div>
+
+      <div class="developer-info">
+        <p>Desenvolvido com 🧡 por <strong>Rodrigo Soares</strong></p>
+        <div class="links">
+          <a
+            href="#"
+            class="link-btn"
+          >GitHub</a>
+          <a
+            href="#"
+            class="link-btn"
+          >Portfolio</a>
+        </div>
+      </div>
+    </div> -->
+
   </div>
 </template>
 
@@ -125,9 +149,9 @@ import { useGameStore } from '@/stores/gameStore'
 import { storeToRefs } from 'pinia'
 
 const gameStore = useGameStore()
-const { volume, autoSaveEnabled, autoSaveInterval } = storeToRefs(gameStore)
+const { volume, autoSaveEnabled, autoSaveInterval, theme } = storeToRefs(gameStore)
+
 const language = ref('pt-BR')
-const theme = ref('light')
 
 function handleReset() {
   const confirmacao = confirm(
@@ -143,15 +167,15 @@ function handleReset() {
 <style scoped>
 .tab-view {
   padding: 20px 15px;
-  background-color: #f4f6f8;
-  min-height: 100%;
+  padding-bottom: 90px;
 }
 
 .header-section h2 {
   text-align: center;
-  color: #333;
   margin-bottom: 20px;
   font-size: 1.8rem;
+  font-weight: 800;
+  color: inherit;
 }
 
 .settings-card {
@@ -193,19 +217,19 @@ function handleReset() {
 .label-group label,
 .setting-row>label {
   font-weight: 600;
-  color: #444;
   font-size: 1rem;
+  color: inherit;
 }
 
 .label-group small {
-  color: #999;
+  opacity: 0.6;
   font-size: 0.8rem;
   margin-top: 2px;
 }
 
 .divider {
   border: 0;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   margin: 10px 0;
 }
 
@@ -231,6 +255,7 @@ function handleReset() {
   bottom: 0;
   background-color: #ccc;
   transition: .4s;
+  border-radius: 34px;
 }
 
 .slider:before {
@@ -243,26 +268,15 @@ function handleReset() {
   background-color: white;
   transition: .4s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
 }
 
 input:checked+.slider {
   background-color: #ff9900;
 }
 
-input:focus+.slider {
-  box-shadow: 0 0 1px #ff9900;
-}
-
 input:checked+.slider:before {
   transform: translateX(22px);
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
 }
 
 .slider-container {
@@ -273,9 +287,9 @@ input:checked+.slider:before {
   -webkit-appearance: none;
   width: 100%;
   height: 8px;
+  background-color: rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   outline: none;
-  background-color: #e0e0e0;
   background-image: linear-gradient(#ff9900, #ff9900);
   background-repeat: no-repeat;
 }
@@ -289,8 +303,6 @@ input:checked+.slider:before {
   border: 2px solid #ff9900;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: transform 0.1s;
-  margin-top: 0px;
 }
 
 .select-wrapper {
@@ -302,10 +314,10 @@ input:checked+.slider:before {
   width: 100%;
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid #ddd;
-  background-color: #f9f9f9;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.05);
   font-size: 0.95rem;
-  color: #333;
+  color: inherit;
   outline: none;
   text-overflow: ellipsis;
 }
@@ -315,22 +327,22 @@ input:checked+.slider:before {
 }
 
 .danger-zone {
-  border: 1px solid #ffeeba;
-  background: #fffbf0;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  background: rgba(220, 53, 69, 0.05) !important;
 }
 
 .danger-zone h3 {
-  color: #d9534f;
+  color: #dc3545;
 }
 
 .warning-text {
   font-size: 0.85rem;
-  color: #888;
+  opacity: 0.7;
   margin-bottom: 15px;
 }
 
 .danger-button {
-  background-color: #fff;
+  background-color: transparent;
   color: #dc3545;
   border: 1px solid #dc3545;
   padding: 12px;
@@ -349,5 +361,65 @@ input:checked+.slider:before {
 .danger-button:active {
   background-color: #dc3545;
   color: white;
+}
+
+.about-card {
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.app-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.app-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #ffb700, #ff9900);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.app-name {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.app-version {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.developer-info p {
+  opacity: 0.8;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.links {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.link-btn {
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.link-btn:hover {
+  background-color: #ff9900;
+  color: white;
+  border-color: #ff9900;
 }
 </style>

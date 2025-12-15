@@ -1,12 +1,20 @@
 <template>
   <div class="clicker-area">
+
     <button
       @click="handleClick"
-      class="bitcoin-button"
+      class="bitcoin-coin"
     >
-      <span class="bitcoin-icon">₿</span>
+      <div class="coin-face">
+        <div class="coin-inner-ring">
+          <span class="currency-symbol">₿</span>
+        </div>
+      </div>
     </button>
-    <div class="click-power">Poder do Clique: {{ gameStore.clickPower }}</div>
+
+    <div class="click-power-badge">
+      ⚡ {{ gameStore.clickPower }} por clique
+    </div>
 
     <div
       v-for="popup in popups"
@@ -14,7 +22,7 @@
       class="click-popup"
       :style="{ left: popup.x + 'px', top: popup.y + 'px' }"
     >
-      +{{ popup.amount }}
+      +{{ formatNumber(popup.amount) }}
     </div>
   </div>
 </template>
@@ -32,25 +40,26 @@ let batchTimer = null
 let batchAmount = 0
 let batchX = 0
 let batchY = 0
+const BATCH_WINDOW_MS = 80
 
-const BATCH_WINDOW_MS = 100
+function formatNumber(num) {
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
+  return Math.floor(num)
+}
 
 function handleClick(event) {
   gameStore.clickBitcoin()
 
-  const clickPowerAmount = gameStore.clickPower
+  if (navigator.vibrate) navigator.vibrate(5)
 
+  const clickPowerAmount = gameStore.clickPower
   batchAmount += clickPowerAmount
 
-  if (batchTimer) {
-    return
-  }
+  if (batchTimer) return
 
   const areaRect = event.currentTarget.parentElement.getBoundingClientRect()
-  const clickX = event.clientX
-  const clickY = event.clientY
-  batchX = clickX - areaRect.left
-  batchY = clickY - areaRect.top
+  batchX = event.clientX - areaRect.left
+  batchY = event.clientY - areaRect.top
 
   batchTimer = setTimeout(() => {
     const newPopup = {
@@ -63,11 +72,10 @@ function handleClick(event) {
 
     setTimeout(() => {
       popups.value = popups.value.filter(p => p.id !== newPopup.id)
-    }, 10000)
+    }, 800)
 
     batchTimer = null
     batchAmount = 0
-
   }, BATCH_WINDOW_MS)
 }
 </script>
@@ -78,68 +86,114 @@ function handleClick(event) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  min-height: 300px;
-  overflow: hidden;
+  justify-content: center;
+  width: 100%;
 }
 
-.bitcoin-button {
-  background: #ff9900;
-  border: none;
+.bitcoin-coin {
+  position: relative;
+  width: 260px;
+  height: 260px;
   border-radius: 50%;
-  width: 250px;
-  height: 250px;
+  border: none;
+  background: transparent;
   cursor: pointer;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  transition: transform 0.1s ease;
-  user-select: none;
-  z-index: 10;
+  padding: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: floatIdle 3s ease-in-out infinite;
 }
 
-.bitcoin-button:active {
-  transform: scale(0.95);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+.bitcoin-coin:active {
+  transform: scale(0.92) !important;
+  animation: none;
 }
 
-.bitcoin-icon {
-  font-size: 150px;
+.coin-face {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffb700 0%, #ff9900 100%);
+  border: 8px solid #e68a00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 5px 10px rgba(255, 255, 255, 0.4), inset 0 -5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.coin-inner-ring {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  border: 4px dashed rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.currency-symbol {
+  font-size: 140px;
   color: white;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  user-select: none;
 }
 
-.click-power {
-  margin-top: 20px;
-  font-size: 1.2em;
-  color: #333;
+.click-power-badge {
+  margin-top: 30px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  color: #555;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  pointer-events: none;
 }
 
 .click-popup {
   position: absolute;
-  color: #ffffff;
-  font-size: 1.5em;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  color: #333;
+  font-size: 2rem;
+  font-weight: 900;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 1);
   white-space: nowrap;
-  animation: floatUpFadeOut 1s ease-out forwards;
-  z-index: 20;
   pointer-events: none;
+  z-index: 100;
   transform: translateX(-50%);
+  animation: popUpFloat 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-@keyframes floatUpFadeOut {
+@keyframes floatIdle {
   0% {
-    opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateY(0px);
   }
 
-  70% {
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes popUpFloat {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 10px) scale(0.5);
+  }
+
+  20% {
     opacity: 1;
-    transform: translate(-50%, -50px);
+    transform: translate(-50%, -20px) scale(1.2);
   }
 
   100% {
     opacity: 0;
-    transform: translate(-50%, -80px);
+    transform: translate(-50%, -100px) scale(1);
   }
 }
 </style>
