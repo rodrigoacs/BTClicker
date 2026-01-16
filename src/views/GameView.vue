@@ -8,7 +8,7 @@
         <span>{{ formatNumber(gameStore.totalBitcoins) }}</span>
       </div>
       <div class="btc-rate">
-        {{ formatNumber(gameStore.btcPerSecond) }} por segundo
+        {{ formatNumber(gameStore.btcPerSecond) }} {{ gameStore.texts.home.per_second }}
       </div>
     </div>
 
@@ -21,17 +21,9 @@
 <script setup>
 import { useGameStore } from '@/stores/gameStore'
 import BitcoinClicker from '@/components/BitcoinClicker.vue'
+import { formatNumber } from '@/utils/formatNumber'
 
 const gameStore = useGameStore()
-
-function formatNumber(num) {
-  if (num >= 1_000_000_000_000_000) return (num / 1_000_000_000_000_000).toFixed(2) + 'Q'
-  if (num >= 1_000_000_000_000) return (num / 1_000_000_000_000).toFixed(2) + 'T'
-  if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(2) + 'B'
-  if (num >= 1_000_000) return (num / 1_000_000).toFixed(2) + 'M'
-  if (num >= 1_000) return (num / 1_000).toFixed(2) + 'K'
-  return Math.floor(num).toLocaleString('pt-BR')
-}
 </script>
 
 <style scoped>
@@ -44,7 +36,7 @@ function formatNumber(num) {
   height: 100%;
   padding: 20px;
   overflow: hidden;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: transparent;
 }
 
 .background-decoration {
@@ -65,13 +57,14 @@ function formatNumber(num) {
   text-align: center;
   margin-bottom: 40px;
   padding: 20px 40px;
-  background: rgba(255, 255, 255, 0.65);
+  background: var(--header-bg);
+  border: 1px solid var(--border-color);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 20px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
   min-width: 250px;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 .btc-amount {
@@ -81,7 +74,7 @@ function formatNumber(num) {
   gap: 10px;
   font-size: 2.8rem;
   font-weight: 800;
-  color: #333;
+  color: var(--text-color);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
@@ -95,7 +88,8 @@ function formatNumber(num) {
   margin-top: 5px;
   font-size: 1rem;
   font-weight: 600;
-  color: #666;
+  color: var(--text-color);
+  opacity: 0.7;
   text-transform: uppercase;
   letter-spacing: 1px;
 }

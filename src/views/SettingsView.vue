@@ -1,15 +1,15 @@
 <template>
   <div class="tab-view">
     <div class="header-section">
-      <h2>Ajustes</h2>
+      <h2>{{ t.settings.title }}</h2>
     </div>
 
     <div class="settings-card">
-      <h3>🔊 Áudio</h3>
+      <h3>🔊 {{ t.settings.audio_group }}</h3>
 
       <div class="setting-row">
         <div class="label-group">
-          <label>Volume Master</label>
+          <label>{{ t.settings.volume_label }}</label>
         </div>
         <div class="value-display">{{ volume }}%</div>
       </div>
@@ -27,13 +27,13 @@
     </div>
 
     <div class="settings-card">
-      <h3>🎮 Salvamento</h3>
+      <h3>🎮 {{ t.settings.game_group }}</h3>
 
       <div class="setting-row">
         <div class="label-group">
-          <label for="autoSave">Salvamento Automático</label>
-          <small v-if="autoSaveEnabled">Ativo</small>
-          <small v-else>Desativado (Cuidado!)</small>
+          <label for="autoSave">{{ t.settings.autosave_label }}</label>
+          <small v-if="autoSaveEnabled">{{ t.settings.autosave_active }}</small>
+          <small v-else>{{ t.settings.autosave_inactive }}</small>
         </div>
 
         <label class="switch">
@@ -53,8 +53,8 @@
         :class="{ disabled: !autoSaveEnabled }"
       >
         <div class="label-group">
-          <label for="saveInterval">Frequência</label>
-          <small>Intervalo do salvamento</small>
+          <label for="saveInterval">{{ t.settings.frequency_label }}</label>
+          <small>{{ t.settings.frequency_desc }}</small>
         </div>
 
         <div class="select-wrapper">
@@ -63,20 +63,20 @@
             v-model="autoSaveInterval"
             :disabled="!autoSaveEnabled"
           >
-            <option :value="10000">10 Segundos</option>
-            <option :value="30000">30 Segundos</option>
-            <option :value="60000">1 Minuto</option>
-            <option :value="300000">5 Minutos</option>
+            <option :value="10000">10s</option>
+            <option :value="30000">30s</option>
+            <option :value="60000">1m</option>
+            <option :value="300000">5m</option>
           </select>
         </div>
       </div>
     </div>
 
     <div class="settings-card">
-      <h3>🎨 Interface</h3>
+      <h3>🎨 {{ t.settings.interface_group }}</h3>
 
       <div class="setting-row">
-        <label for="language">🌐 Idioma</label>
+        <label for="language">🌐 {{ t.settings.language_label }}</label>
         <div class="select-wrapper">
           <select
             id="language"
@@ -91,42 +91,41 @@
       <hr class="divider">
 
       <div class="setting-row">
-        <label for="theme">🌙 Tema</label>
+        <label for="theme">🌙 {{ t.settings.theme_label }}</label>
         <div class="select-wrapper">
           <select
             id="theme"
             v-model="theme"
           >
-            <option value="light">Claro</option>
-            <option value="dark">Escuro</option>
-            <option value="bitcoin">Bitcoin (Laranja)</option>
+            <option value="light">{{ t.themes.light }}</option>
+            <option value="dark">{{ t.themes.dark }}</option>
+            <option value="bitcoin">{{ t.themes.bitcoin }}</option>
           </select>
         </div>
       </div>
     </div>
 
     <div class="settings-card danger-zone">
-      <h3>⚠️ Zona de Perigo</h3>
-      <p class="warning-text">Ações aqui não podem ser desfeitas.</p>
+      <h3>⚠️ {{ t.settings.danger_group }}</h3>
+      <p class="warning-text">{{ t.settings.danger_desc }}</p>
       <button
         @click="handleReset"
         class="danger-button"
       >
-        🗑️ Apagar Todo o Progresso
+        🗑️ {{ t.settings.reset_btn }}
       </button>
     </div>
 
-    <!-- <div class="settings-card about-card">
+    <div class="settings-card about-card">
       <div class="app-info">
         <span class="app-icon">₿</span>
         <div>
           <h4 class="app-name">Bitcoin Clicker</h4>
-          <span class="app-version">Versão 1.0.0</span>
+          <span class="app-version">v1.0.0</span>
         </div>
       </div>
 
       <div class="developer-info">
-        <p>Desenvolvido com 🧡 por <strong>Rodrigo Soares</strong></p>
         <div class="links">
           <a
             href="#"
@@ -135,27 +134,27 @@
           <a
             href="#"
             class="link-btn"
-          >Portfolio</a>
+          >Socials</a>
         </div>
       </div>
-    </div> -->
+    </div>
 
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
 import { storeToRefs } from 'pinia'
 
 const gameStore = useGameStore()
-const { volume, autoSaveEnabled, autoSaveInterval, theme } = storeToRefs(gameStore)
+const { volume, autoSaveEnabled, autoSaveInterval, theme, language } = storeToRefs(gameStore)
 
-const language = ref('pt-BR')
+const t = computed(() => gameStore.texts)
 
 function handleReset() {
   const confirmacao = confirm(
-    "Tem certeza absoluta?\n\nIsso apagará seus Bitcoins, Upgrades e Geradores permanentemente e recarregará o jogo."
+    "Reset all progress? / Tem certeza que deseja apagar tudo?"
   )
 
   if (confirmacao) {
@@ -284,6 +283,7 @@ input:checked+.slider:before {
 }
 
 .custom-slider {
+  appearance: none;
   -webkit-appearance: none;
   width: 100%;
   height: 8px;
@@ -296,6 +296,7 @@ input:checked+.slider:before {
 
 .custom-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none;
   height: 24px;
   width: 24px;
   border-radius: 50%;
@@ -379,6 +380,7 @@ input:checked+.slider:before {
   font-size: 3rem;
   margin-bottom: 10px;
   background: linear-gradient(135deg, #ffb700, #ff9900);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

@@ -1,14 +1,14 @@
 <template>
   <div class="shop-view">
     <div class="shop-header">
-      <h2>Upgrades</h2>
+      <h2>{{ gameStore.texts.upgrades.title }}</h2>
       <div class="balance-badge">
         <span class="symbol">₿</span>
-        <span>{{ formatShort(gameStore.totalBitcoins) }}</span>
+        <span>{{ formatNumber(gameStore.totalBitcoins) }}</span>
       </div>
     </div>
 
-    <p class="shop-subtitle">Potencialize seus cliques e multiplicadores.</p>
+    <p class="shop-subtitle">{{ gameStore.texts.upgrades.subtitle }}</p>
 
     <div class="cards-container">
       <div
@@ -31,15 +31,15 @@
         </div>
 
         <div class="card-actions">
-          <span class="item-level">Lvl {{ upgrade.owned }}</span>
+          <span class="item-level">{{ gameStore.texts.upgrades.level }} {{ upgrade.owned }}</span>
 
           <button
             @click="gameStore.buyItem('upgrade', upgrade.id)"
             :disabled="gameStore.totalBitcoins < upgrade.cost"
             class="buy-btn"
           >
-            <span class="cost-label">Preço</span>
-            <span class="cost-value">₿ {{ formatShort(upgrade.cost) }}</span>
+            <span class="cost-label">{{ gameStore.texts.upgrades.price }}</span>
+            <span class="cost-value">₿ {{ formatNumber(upgrade.cost) }}</span>
           </button>
         </div>
 
@@ -51,19 +51,13 @@
 <script setup>
 import { computed } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
+import { formatNumber } from '@/utils/formatNumber'
 
 const gameStore = useGameStore()
 
 const filteredUpgrades = computed(() => {
-  return gameStore.upgrades.filter(up => up.category === 'click' || up.category === 'multiplier')
+  return gameStore.translatedUpgrades.filter(up => up.category === 'click' || up.category === 'multiplier')
 })
-
-function formatShort(num) {
-  if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + 'B'
-  if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + 'M'
-  if (num >= 1_000) return (num / 1_000).toFixed(1) + 'k'
-  return Math.ceil(num).toLocaleString('pt-BR')
-}
 
 function getIcon(item) {
   const name = item.name.toLowerCase()
@@ -96,18 +90,18 @@ function getIcon(item) {
 
 .shop-header h2 {
   margin: 0;
-  color: #333;
+  color: var(--text-color);
   font-size: 1.8rem;
   font-weight: 800;
 }
 
 .balance-badge {
-  background-color: #fff;
+  background-color: var(--card-bg);
   padding: 5px 12px;
   border-radius: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   font-weight: bold;
-  color: #555;
+  color: var(--text-color);
   display: flex;
   align-items: center;
   gap: 5px;
@@ -115,11 +109,12 @@ function getIcon(item) {
 }
 
 .balance-badge .symbol {
-  color: #ff9900;
+  color: var(--accent-color);
 }
 
 .shop-subtitle {
-  color: #888;
+  color: var(--text-color);
+  opacity: 0.7;
   font-size: 0.9rem;
   margin-top: 0;
   margin-bottom: 20px;
@@ -132,20 +127,20 @@ function getIcon(item) {
 }
 
 .upgrade-card {
-  background: white;
+  background: var(--card-bg);
   border-radius: 16px;
   padding: 15px;
   display: flex;
   align-items: center;
   gap: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--border-color);
   transition: transform 0.1s, opacity 0.2s;
 }
 
 .upgrade-card.disabled {
   opacity: 0.6;
-  background: #f9f9f9;
+  background: var(--input-bg);
 }
 
 .upgrade-card.disabled .card-icon {
@@ -182,7 +177,7 @@ function getIcon(item) {
 
 .item-name {
   font-weight: 700;
-  color: #333;
+  color: var(--text-color);
   font-size: 1rem;
   white-space: nowrap;
   overflow: hidden;
@@ -193,7 +188,8 @@ function getIcon(item) {
 .item-desc {
   margin: 0;
   font-size: 0.8rem;
-  color: #777;
+  color: var(--text-color);
+  opacity: 0.7;
   line-height: 1.2;
 }
 
@@ -209,7 +205,8 @@ function getIcon(item) {
 .item-level {
   font-size: 0.75rem;
   font-weight: bold;
-  color: #999;
+  color: var(--text-color);
+  opacity: 0.6;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -234,8 +231,9 @@ function getIcon(item) {
 }
 
 .buy-btn:disabled {
-  background-color: #e0e0e0;
-  color: #999;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }

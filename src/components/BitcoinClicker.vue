@@ -13,7 +13,7 @@
     </button>
 
     <div class="click-power-badge">
-      ⚡ {{ gameStore.clickPower }} por clique
+      ⚡ {{ gameStore.clickPower }} {{ gameStore.texts.home.power_badge }}
     </div>
 
     <div
@@ -30,6 +30,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
+import { formatNumber } from '@/utils/formatNumber'
 
 const gameStore = useGameStore()
 
@@ -41,11 +42,6 @@ let batchAmount = 0
 let batchX = 0
 let batchY = 0
 const BATCH_WINDOW_MS = 80
-
-function formatNumber(num) {
-  if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
-  return Math.floor(num)
-}
 
 function handleClick(event) {
   gameStore.clickBitcoin()
@@ -143,22 +139,24 @@ function handleClick(event) {
 
 .click-power-badge {
   margin-top: 30px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--header-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
   padding: 8px 16px;
   border-radius: 20px;
   font-weight: bold;
-  color: #555;
   font-size: 0.9rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   pointer-events: none;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .click-popup {
   position: absolute;
-  color: #333;
+  color: var(--accent-color);
   font-size: 2rem;
   font-weight: 900;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
   pointer-events: none;
   z-index: 100;
